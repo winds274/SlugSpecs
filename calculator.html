@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Bar Premix Calculator</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+    body { font-family: Arial, sans-serif; margin: 0; padding: 10px; background: #222; color: #fff; }
+    h1 { text-align: center; }
+    .cocktail { background: #333; padding: 10px; margin: 5px 0; border-radius: 8px; }
+    .cocktail-header { display: flex; align-items: center; justify-content: space-between; }
+    .color-icon { width: 20px; height: 20px; border-radius: 4px; margin-right: 8px; flex-shrink: 0; }
+    .two-tone { background: linear-gradient(to bottom, var(--top) 50%, var(--bottom) 50%); }
+    .controls { display: flex; align-items: center; gap: 5px; }
+    button { padding: 5px 10px; font-size: 16px; border: none; border-radius: 4px; background: #555; color: #fff; }
+    button:active { background: #777; }
+    .count { min-width: 30px; text-align: center; font-size: 16px; }
+    .ingredients { margin-top: 5px; font-size: 14px; display: none; padding-left: 28px; }
+    .total-section { background: #444; padding: 10px; border-radius: 8px; margin-top: 15px; }
+    .toggle { cursor: pointer; flex: 1; }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html">Home</a>
+</nav>
+
+<h1>Premix Stock Calculator</h1>
+<div id="cocktail-list"></div>
+<div class="total-section">
+    <h2>Overall Stock Needed</h2>
+    <div id="totals"></div>
+</div>
+
+<script>
+let cocktails = {};
+const counts = {};
+
+// Load cocktails from JSON
+fetch("calculator.json")   // or "specs.json" if you renamed it
+  .then(response => response.json())
+  .then(data => {
+    cocktails = data;
+    // Initialize counts for each cocktail
+    Object.keys(cocktails).forEach(c => counts[c] = 0);
+    // Render and update totals as before
+    renderCocktails();
+    updateTotals();
+  })
+  .catch(error => console.error("Error loading cocktails:", error));
+
+// Everything else stays exactly the same
+function updateTotals() {
+    const totalIngredients = {};
+    for (let [cocktail, qty] of Object.entries(counts)) {
+        if (qty > 0) {
+            const recipe = cocktails[cocktail].recipe;
+            const totalParts = Object.values(recipe).reduce((a, b) => a + b, 0);
+            for (let [item, amount] of Object.entries(recipe)) {
+                const perPremix = amount / totalParts;
+                totalIngredients[item] = (totalIngredients[item] || 0) + (perPremix * qty);
+            }
+        }
+    }
+    const sorted = Object.keys(totalIngredients).sort();
+    document.getElementById("totals").innerHTML = sorted.map(item => `${item}: ${totalIngredients[item].toFixed(2)}`).join("<br>");
+}
+
+function toggleIngredients(name) {
+    const ingDiv = document.getElementById(`ingredients-${name}`);
+    ingDiv.style.display = ingDiv.style.display === "block" ? "none" : "block";
+}
+
+function renderCocktails() {
+    const list = document.getElementById("cocktail-list");
+    list.innerHTML = "";
+    for (let [name, data] of Object.entries(cocktails)) {
+        const div = document.createElement("div");
+        div.className = "cocktail";
+        
+        const header = document.createElement("div");
+        header.className = "cocktail-header";
+        
+        const colorDiv = document.createElement("div");
+        colorDiv.className = "color-icon";
+        if (data.color.length === 1) {
+            colorDiv.style.background = data.color[0];
+        } else {
+            colorDiv.classList.add("two-tone");
+            colorDiv.style.setProperty("--top", data.color[0]);
+            colorDiv.style.setProperty("--bottom", data.color[1]);
+        }
+        
+        const nameSpan = document.createElement("span");
+        nameSpan.textContent = name;
+        nameSpan.className = "toggle";
+        nameSpan.onclick = () => toggleIngredients(name);
+        
+        const controls = document.createElement("div");
+        controls.className = "controls";
+        const minus = document.createElement("button");
+        minus.textContent = "−";
+        minus.onclick = () => { if (counts[name]>0) counts[name]--; updateCocktail(name); };
+        const countSpan = document.createElement("span");
+        countSpan.className = "count";
+        countSpan.id = `count-${name}`;
+        countSpan.textContent = counts[name];
+        const plus = document.createElement("button");
+        plus.textContent = "+";
+        plus.onclick = () => { counts[name]++; updateCocktail(name); };
+        
+        controls.append(minus, countSpan, plus);
+        header.append(colorDiv, nameSpan, controls);
+        
+        const ingDiv = document.createElement("div");
+        ingDiv.className = "ingredients";
+        ingDiv.id = `ingredients-${name}`;
+        
+        div.append(header, ingDiv);
+        list.appendChild(div);
+    }
+}
+
+function updateCocktail(name) {
+    document.getElementById(`count-${name}`).textContent = counts[name];
+    const ingDiv = document.getElementById(`ingredients-${name}`);
+    if (counts[name] > 0) {
+        const recipe = cocktails[name].recipe;
+        const totalParts = Object.values(recipe).reduce((a, b) => a + b, 0);
+        const lines = Object.keys(recipe).sort().map(item => {
+            const perPremix = recipe[item] / totalParts;
+            return `${item}: ${(perPremix * counts[name]).toFixed(2)}`;
+        });
+        ingDiv.innerHTML = lines.join("<br>");
+    } else {
+        ingDiv.innerHTML = "";
+    }
+    updateTotals();
+}
+
+function clearAll() {
+    Object.keys(counts).forEach(c => counts[c] = 0);
+    renderCocktails();
+    updateTotals();
+}
+</script>
+
+<button onclick="clearAll()" style="width:100%;padding:10px;margin-bottom:10px;font-size:16px;background:#a33;color:white;border:none;border-radius:6px;">Clear</button>
+</body>
+</html>
