@@ -4,7 +4,7 @@ const fs = require("fs");
 const multer = require("multer");
 
 const app = express();
-const PORT = 7479;
+const PORT = process.env.PORT || 7479;
 
 const drinksFile = path.join(__dirname, "specs.json");
 const imagesDir = path.join(__dirname, "Images");
@@ -136,7 +136,7 @@ app.delete("/removeDrink/:name", (req, res) => {
   res.sendStatus(200);
 });
 
-app.listen(PORT, '0.0.0.0', () => {
-  console.log(`Server running at http://barapp.local:${PORT}`);
+app.listen(PORT, () => {
+  console.log(`Server running at on port ${PORT}`);
 });
 
