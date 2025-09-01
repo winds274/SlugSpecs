@@ -77,8 +77,9 @@
       "purple"
     ],
     "recipe": {
-      "Tequila Gold": 1,
-      "Triple Sec": 1
+      "Tequila Gold": 2,
+      "Triple Sec": 1,
+      "Grenadine": 1
     }
   },
   "Beach Babes": {
