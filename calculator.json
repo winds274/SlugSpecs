@@ -163,5 +163,26 @@
       "Grenadine": 1,
       "Passionfruit Syrup": 1
     }
+  },
+  "All Seeing Eye": {
+    "color": [
+      "Orange",
+      "Blue"
+    ],
+    "recipe": {
+      "Hendrick's": 2,
+      "Fraise": 2,
+      "Gomme": 1
+    }
+  },
+  "Morticia's Mirror": {
+    "color": [
+      "Black",
+      "Orange"
+    ],
+    "recipe": {
+      "Sailor Jerry": 1,
+      "Midori": 1
+    }
   }
 }
