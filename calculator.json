@@ -1,0 +1,166 @@
+{
+  "Sea You Later": {
+    "color": [
+      "blue"
+    ],
+    "recipe": {
+      "Gordon’s Pink": 3,
+      "Big Blue": 1,
+      "Passionfruit Syrup": 1
+    }
+  },
+  "Zombie": {
+    "color": [
+      "gray",
+      "black"
+    ],
+    "recipe": {
+      "Captain Morgan’s White": 1,
+      "Captain Morgan’s Spiced": 1
+    }
+  },
+  "Sangria": {
+    "color": [
+      "orange"
+    ],
+    "recipe": {
+      "Elderflower Cordial": 1.4,
+      "Nectarine Liqueur": 1,
+      "Ketel One": 2
+    }
+  },
+  "Espresso Martini": {
+    "color": [
+      "green"
+    ],
+    "recipe": {
+      "Gomme": 1,
+      "Riviera Coffee Liqueur": 2,
+      "Smirnoff Red": 2
+    }
+  },
+  "Peach Paloma": {
+    "color": [
+      "orange",
+      "white"
+    ],
+    "recipe": {
+      "Casamigos": 1,
+      "Archers": 1
+    }
+  },
+  "Watermelon Cooler": {
+    "color": [
+      "red",
+      "green"
+    ],
+    "recipe": {
+      "Hendrick’s": 1,
+      "Archers": 1,
+      "Watermelon Syrup": 1
+    }
+  },
+  "Tequila Sunrise": {
+    "color": [
+      "orange",
+      "purple"
+    ],
+    "recipe": {
+      "Tequila Gold": 2,
+      "Triple Sec": 1,
+      "Grenadine": 1
+    }
+  },
+  "Beach Babes": {
+    "color": [
+      "red",
+      "black"
+    ],
+    "recipe": {
+      "Malibu Strawberry": 1,
+      "Fraise": 1
+    }
+  },
+  "Purple Disco Machine": {
+    "color": [
+      "purple"
+    ],
+    "recipe": {
+      "Cherry Smirnoff": 3,
+      "Big Blue": 1
+    }
+  },
+  "Hot Honey Margarita": {
+    "color": [
+      "gray"
+    ],
+    "recipe": {
+      "Cazcabel Honey Tequila": 2,
+      "Casamigos": 1,
+      "Monin Honey Syrup": 2
+    }
+  },
+  "HBD": {
+    "color": [
+      "yellow",
+      "blue"
+    ],
+    "recipe": {
+      "Chase Rhubarb Vodka": 2,
+      "Fraise": 1,
+      "Monin Lychee Syrup": 1
+    }
+  },
+  "Candy Apple": {
+    "color": [
+      "white",
+      "green"
+    ],
+    "recipe": {
+      "JD Apple": 1,
+      "Sailor Jerry": 1
+    }
+  },
+  "Strawberry Sprinkle": {
+    "color": [
+      "yellow",
+      "red"
+    ],
+    "recipe": {
+      "Vanilla Smirnoff": 1,
+      "Fraise": 1
+    }
+  },
+  "Great Godfather": {
+    "color": [
+      "brown"
+    ],
+    "recipe": {
+      "JD": 2,
+      "Disaronno": 2,
+      "Gomme": 1
+    }
+  },
+  "Hurricane": {
+    "color": [
+      "white",
+      "brown"
+    ],
+    "recipe": {
+      "Captain Morgan’s Spiced": 2,
+      "Captain Morgan’s Black Spiced": 2,
+      "Grenadine": 1,
+      "Passionfruit Syrup": 1
+    }
+  },
+  "Crimbo-Politan": {
+    "color": [
+      "White"
+    ],
+    "recipe": {
+      "Ketel One Citroen": 3,
+      "Winter Spiced Berries Syrup": 1,
+      "Grenadine": 1
+    }
+  }
+}

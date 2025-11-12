@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Drink Manager</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    form { margin-bottom: 20px; padding: 15px; border: 1px solid #ccc; border-radius: 5px; }
+    input, textarea, button { display: block; margin: 8px 0; padding: 8px; width: 100%; }
+    .drink { border: 1px solid #ddd; margin: 10px 0; padding: 10px; border-radius: 5px; }
+    img { max-width: 100px; display: block; margin-top: 5px; }
+    #message { margin: 10px 0; padding: 10px; border-radius: 5px; display: none; }
+    #message.success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+    #message.error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+  </style>
+</head>
+<body>
+  <h1>Cocktail Manager</h1>
+
+  <nav>
+    <a href="index.html">Home</a>
+  </nav>
+
+  <!-- Status message -->
+  <div id="message"></div>
+
+  <!-- Form to add a new drink -->
+  <form id="drinkForm">
+    <label>Name</label>
+    <input type="text" id="name" required>
+
+    <label>Image (optional)</label>
+    <input type="file" id="image" accept="image/*">
+
+    <label>Ingredients (one per line, format: Ingredient: Measurement)</label>
+    <textarea id="ingredients" rows="5" required></textarea>
+
+    <button type="submit">Add Drink</button>
+  </form>
+
+  <h2>Current Drinks</h2>
+  <div id="drinksList"></div>
+
+  <script>
+    const messageBox = document.getElementById("message");
+
+    function showMessage(text, type = "success") {
+      messageBox.textContent = text;
+      messageBox.className = type === "success" ? "success" : "error";
+      messageBox.style.display = "block";
+      setTimeout(() => { messageBox.style.display = "none"; }, 3000);
+    }
+
+    async function loadDrinks() {
+      try {
+        const res = await fetch("/specs.json");
+        if (!res.ok) return;
+        const drinks = await res.json();
+        const list = document.getElementById("drinksList");
+        list.innerHTML = "";
+        for (const [name, drink] of Object.entries(drinks)) {
+          const div = document.createElement("div");
+          div.className = "drink";
+          div.innerHTML = `
+            <strong>${name}</strong><br>
+            ${drink.image ? `<img src="Images/${drink.image}" alt="${name}">` : ""}
+            <pre>${JSON.stringify(drink.ingredients, null, 2)}</pre>
+            <button onclick="removeDrink('${name}')">Remove</button>
+          `;
+          list.appendChild(div);
+        }
+      } catch (err) {
+        showMessage("Failed to load drinks", "error");
+      }
+    }
+
+    document.getElementById("drinkForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const name = document.getElementById("name").value.trim();
+      const imageInput = document.getElementById("image");
+      const ingredientsText = document.getElementById("ingredients").value.trim();
+
+      // Parse ingredients into object
+      const ingredients = {};
+      ingredientsText.split("\n").forEach(line => {
+        const [ing, meas] = line.split(":").map(s => s.trim());
+        if (ing && meas) ingredients[ing] = meas;
+      });
+
+      const formData = new FormData();
+      formData.append("name", name);
+      formData.append("ingredients", JSON.stringify(ingredients));
+      if (imageInput.files[0]) formData.append("image", imageInput.files[0]);
+
+      try {
+        const res = await fetch("/addDrink", { method: "POST", body: formData });
+        if (res.ok) {
+          showMessage(`✅ ${name} added successfully!`, "success");
+          e.target.reset();
+          loadDrinks();
+        } else {
+          showMessage("❌ Failed to add drink", "error");
+        }
+      } catch (err) {
+        showMessage("❌ Server error while adding drink", "error");
+      }
+    });
+
+    async function removeDrink(name) {
+      try {
+        const res = await fetch(`/removeDrink/${encodeURIComponent(name)}`, { method: "DELETE" });
+        if (res.ok) {
+          showMessage(`🗑️ ${name} removed successfully`, "success");
+          loadDrinks();
+        } else {
+          showMessage("❌ Failed to remove drink", "error");
+        }
+      } catch (err) {
+        showMessage("❌ Server error while removing drink", "error");
+      }
+    }
+
+    loadDrinks();
+  </script>
+</body>
+</html>

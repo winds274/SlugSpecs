@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Modify Calculator Cocktails</title>
+<style>
+  body { font-family: Arial, sans-serif; margin: 20px; background: #f5f5f5; }
+  h1 { text-align: center; }
+  .form-group { margin-bottom: 10px; }
+  label { display: block; margin-bottom: 3px; }
+  input[type="text"] { width: 100%; padding: 5px; }
+  textarea { width: 100%; height: 80px; padding: 5px; }
+  .cocktail { border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; border-radius: 5px; background: #fff; }
+  button { margin-right: 5px; }
+</style>
+</head>
+<body>
+<h1>Modify Calculator Cocktails</h1>
+
+  <nav>
+    <a href="index.html">Home</a>
+  </nav>
+
+<div id="cocktail-form">
+  <div class="form-group">
+    <label for="name">Cocktail Name:</label>
+    <input type="text" id="name">
+  </div>
+  <div class="form-group">
+    <label for="color">Colors (comma separated):</label>
+    <input type="text" id="color" placeholder="e.g. red,blue">
+  </div>
+  <div class="form-group">
+    <label for="ingredients">Ingredients (format: Ingredient:Measurement per line):</label>
+    <textarea id="ingredients" placeholder="Rum:2&#10;Malibu:1"></textarea>
+  </div>
+  <button onclick="addOrUpdateCocktail()">Save</button>
+</div>
+
+<hr>
+
+<h2>Existing Cocktails</h2>
+<div id="cocktails-list"></div>
+
+<script>
+const filePath = "calculator.json"; // JSON file path
+let cocktails = {};
+
+// Load JSON
+async function loadCocktails() {
+  try {
+    const res = await fetch(filePath);
+    cocktails = await res.json();
+    renderCocktailsList();
+  } catch (err) {
+    console.error("Error loading JSON:", err);
+    cocktails = {};
+  }
+}
+
+// Render list for editing/deleting
+function renderCocktailsList() {
+  const list = document.getElementById("cocktails-list");
+  list.innerHTML = "";
+  Object.entries(cocktails).forEach(([name, data]) => {
+    const div = document.createElement("div");
+    div.className = "cocktail";
+    
+    const title = document.createElement("strong");
+    title.textContent = name;
+    
+    const info = document.createElement("div");
+    info.innerHTML = `Colors: ${data.color.join(", ")}<br>Ingredients:<br>` +
+      Object.entries(data.recipe).map(([ing, qty]) => `${ing}: ${qty}`).join("<br>");
+    
+    const editBtn = document.createElement("button");
+    editBtn.textContent = "Edit";
+    editBtn.onclick = () => fillForm(name);
+    
+    const deleteBtn = document.createElement("button");
+    deleteBtn.textContent = "Delete";
+    deleteBtn.onclick = () => deleteCocktail(name);
+    
+    div.append(title, info, editBtn, deleteBtn);
+    list.appendChild(div);
+  });
+}
+
+// Fill form for editing
+function fillForm(name) {
+  const data = cocktails[name];
+  document.getElementById("name").value = name;
+  document.getElementById("color").value = data.color.join(",");
+  document.getElementById("ingredients").value = Object.entries(data.recipe).map(([ing, qty]) => `${ing}:${qty}`).join("\n");
+}
+
+// Add or update cocktail
+function addOrUpdateCocktail() {
+  const name = document.getElementById("name").value.trim();
+  if (!name) return alert("Name required");
+  
+  const color = document.getElementById("color").value.split(",").map(c => c.trim()).filter(c => c);
+  const ingredientsLines = document.getElementById("ingredients").value.split("\n").filter(l => l.includes(":"));
+  const recipe = {};
+  ingredientsLines.forEach(line => {
+    const [ing, qty] = line.split(":");
+    recipe[ing.trim()] = parseFloat(qty);
+  });
+  
+  cocktails[name] = { color, recipe };
+  saveJSON();
+}
+
+// Delete cocktail
+function deleteCocktail(name) {
+  if (confirm(`Delete "${name}"?`)) {
+    delete cocktails[name];
+    saveJSON();
+  }
+}
+
+// Save JSON by sending to backend
+async function saveJSON() {
+  try {
+    const res = await fetch("/save-calculator-json", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(cocktails)
+    });
+    if (!res.ok) throw new Error("Failed to save");
+    loadCocktails();
+    document.getElementById("name").value = "";
+    document.getElementById("color").value = "";
+    document.getElementById("ingredients").value = "";
+  } catch (err) {
+    console.error(err);
+    alert("Error saving JSON (make sure your server handles POST at /save-calculator-json)");
+  }
+}
+
+// Initial load
+loadCocktails();
+</script>
+</body>
+</html>
