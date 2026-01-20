@@ -17,23 +17,34 @@
 <body>
 <h1>Modify Calculator Cocktails</h1>
 
-  <nav>
-    <a href="index.html">Home</a>
-  </nav>
+<nav>
+  <a href="index.html">Home</a>
+</nav>
 
 <div id="cocktail-form">
   <div class="form-group">
     <label for="name">Cocktail Name:</label>
     <input type="text" id="name">
   </div>
+
   <div class="form-group">
     <label for="color">Colors (comma separated):</label>
     <input type="text" id="color" placeholder="e.g. red,blue">
   </div>
+
   <div class="form-group">
     <label for="ingredients">Ingredients (format: Ingredient:Measurement per line):</label>
     <textarea id="ingredients" placeholder="Rum:2&#10;Malibu:1"></textarea>
   </div>
+
+  <!-- PRIMARY CHECKBOX -->
+  <div class="form-group">
+    <label>
+      <input type="checkbox" id="primaryCheckbox">
+      Set as Primary
+    </label>
+  </div>
+
   <button onclick="addOrUpdateCocktail()">Save</button>
 </div>
 
@@ -43,7 +54,7 @@
 <div id="cocktails-list"></div>
 
 <script>
-const filePath = "calculator.json"; // JSON file path
+const filePath = "calculator.json";
 let cocktails = {};
 
 // Load JSON
@@ -62,12 +73,13 @@ async function loadCocktails() {
 function renderCocktailsList() {
   const list = document.getElementById("cocktails-list");
   list.innerHTML = "";
+
   Object.entries(cocktails).forEach(([name, data]) => {
     const div = document.createElement("div");
     div.className = "cocktail";
     
     const title = document.createElement("strong");
-    title.textContent = name;
+    title.textContent = name + (data.primary ? " ⭐ (Primary)" : "");
     
     const info = document.createElement("div");
     info.innerHTML = `Colors: ${data.color.join(", ")}<br>Ingredients:<br>` +
@@ -92,6 +104,7 @@ function fillForm(name) {
   document.getElementById("name").value = name;
   document.getElementById("color").value = data.color.join(",");
   document.getElementById("ingredients").value = Object.entries(data.recipe).map(([ing, qty]) => `${ing}:${qty}`).join("\n");
+  document.getElementById("primaryCheckbox").checked = !!data.primary;
 }
 
 // Add or update cocktail
@@ -106,8 +119,11 @@ function addOrUpdateCocktail() {
     const [ing, qty] = line.split(":");
     recipe[ing.trim()] = parseFloat(qty);
   });
-  
-  cocktails[name] = { color, recipe };
+
+  // Primary checkbox
+  const isPrimary = document.getElementById("primaryCheckbox").checked;
+
+  cocktails[name] = { color, recipe, primary: isPrimary };
   saveJSON();
 }
 
@@ -132,6 +148,7 @@ async function saveJSON() {
     document.getElementById("name").value = "";
     document.getElementById("color").value = "";
     document.getElementById("ingredients").value = "";
+    document.getElementById("primaryCheckbox").checked = false;
   } catch (err) {
     console.error(err);
     alert("Error saving JSON (make sure your server handles POST at /save-calculator-json)");

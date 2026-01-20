@@ -29,14 +29,8 @@
 <h1>Premix Stock Calculator</h1>
 <div id="cocktail-list"></div>
 <div class="total-section">
-    <h2>Primary Mixes</h2>
-    <div id="primary-list"></div>
-
     <h2>Overall Stock Needed</h2>
     <div id="totals"></div>
-
-    <h4 style="cursor:pointer" onclick="toggleSecondary()">Secondary Mixes</h4>
-    <div id="secondary-list" style="display:none;"></div>
 </div>
 
 <script>
@@ -55,11 +49,6 @@ fetch("calculator.json")   // or "specs.json" if you renamed it
     updateTotals();
   })
   .catch(error => console.error("Error loading cocktails:", error));
-
-function toggleSecondary() {
-    const sec = document.getElementById("secondary-list");
-    sec.style.display = sec.style.display === "none" ? "block" : "none";
-}
 
 // Everything else stays exactly the same
 function updateTotals() {
@@ -84,29 +73,15 @@ function toggleIngredients(name) {
 }
 
 function renderCocktails() {
-    const primaryList = document.getElementById("primary-list");
-    const secondaryList = document.getElementById("secondary-list");
-
-    primaryList.innerHTML = "";
-    secondaryList.innerHTML = "";
-
-    const primary = [];
-    const secondary = [];
-
+    const list = document.getElementById("cocktail-list");
+    list.innerHTML = "";
     for (let [name, data] of Object.entries(cocktails)) {
-        (data.primary === true ? primary : secondary).push([name, data]);
-    }
-
-    primary.sort((a, b) => a[0].localeCompare(b[0]));
-    secondary.sort((a, b) => a[0].localeCompare(b[0]));
-
-    function createCocktail(name, data) {
         const div = document.createElement("div");
         div.className = "cocktail";
-
+        
         const header = document.createElement("div");
         header.className = "cocktail-header";
-
+        
         const colorDiv = document.createElement("div");
         colorDiv.className = "color-icon";
         if (data.color.length === 1) {
@@ -116,52 +91,35 @@ function renderCocktails() {
             colorDiv.style.setProperty("--top", data.color[0]);
             colorDiv.style.setProperty("--bottom", data.color[1]);
         }
-
+        
         const nameSpan = document.createElement("span");
         nameSpan.textContent = name;
         nameSpan.className = "toggle";
         nameSpan.onclick = () => toggleIngredients(name);
-
+        
         const controls = document.createElement("div");
         controls.className = "controls";
-
         const minus = document.createElement("button");
         minus.textContent = "−";
-        minus.onclick = () => {
-            if (counts[name] > 0) counts[name]--;
-            updateCocktail(name);
-        };
-
+        minus.onclick = () => { if (counts[name]>0) counts[name]--; updateCocktail(name); };
         const countSpan = document.createElement("span");
         countSpan.className = "count";
         countSpan.id = `count-${name}`;
         countSpan.textContent = counts[name];
-
         const plus = document.createElement("button");
         plus.textContent = "+";
-        plus.onclick = () => {
-            counts[name]++;
-            updateCocktail(name);
-        };
-
+        plus.onclick = () => { counts[name]++; updateCocktail(name); };
+        
         controls.append(minus, countSpan, plus);
         header.append(colorDiv, nameSpan, controls);
-
+        
         const ingDiv = document.createElement("div");
         ingDiv.className = "ingredients";
         ingDiv.id = `ingredients-${name}`;
-
+        
         div.append(header, ingDiv);
-        return div;
+        list.appendChild(div);
     }
-
-    primary.forEach(([name, data]) =>
-        primaryList.appendChild(createCocktail(name, data))
-    );
-
-    secondary.forEach(([name, data]) =>
-        secondaryList.appendChild(createCocktail(name, data))
-    );
 }
 
 function updateCocktail(name) {

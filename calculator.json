@@ -1,4 +1,35 @@
 {
+  "SOTB": {
+    "primary": true,
+    "color": [
+      "yellow"
+    ],
+    "recipe": {
+      "Smirnoff Red": 1,
+      "Archers": 1
+    }
+  },
+  "Pornstar": {
+    "primary": true,
+    "color": [
+      "red"
+    ],
+    "recipe": {
+      "Pornstar Mix Box": 1,
+      "Caramel Syrup": 1
+    }
+  },
+  "Pina Colada": {
+    "color": [
+      "white"
+    ],
+    "recipe": {
+      "Rum Chata": 2,
+      "Malibu": 1,
+      "Captain Morgan’s White": 1,
+      "Coconut Syrup": 1
+    }
+  },
   "Sea You Later": {
     "color": [
       "blue"
@@ -9,17 +40,33 @@
       "Passionfruit Syrup": 1
     }
   },
+  "Long Island": {
+    "primary": true,
+    "color": [
+      "black"
+    ],
+    "recipe": {
+      "Smirnoff Red": 1,
+      "Gordon's": 1,
+      "Captain Morgan’s White": 1,
+      "Tequila": 1,
+      "Triple Sec": 1
+    }
+  },
   "Zombie": {
+    "primary": true,
     "color": [
       "gray",
       "black"
     ],
     "recipe": {
       "Captain Morgan’s White": 1,
-      "Captain Morgan’s Spiced": 1
+      "Captain Morgan’s Spiced": 1,
+      "Gomme": 0.5
     }
   },
   "Sangria": {
+    "primary": true,
     "color": [
       "orange"
     ],
@@ -30,6 +77,7 @@
     }
   },
   "Espresso Martini": {
+    "primary": true,
     "color": [
       "green"
     ],
@@ -50,6 +98,7 @@
     }
   },
   "Watermelon Cooler": {
+    "primary": true,
     "color": [
       "red",
       "green"
@@ -61,6 +110,7 @@
     }
   },
   "Tequila Sunrise": {
+    "primary": true,
     "color": [
       "orange",
       "purple"
@@ -82,6 +132,7 @@
     }
   },
   "Purple Disco Machine": {
+    "primary": true,
     "color": [
       "purple"
     ],
@@ -151,16 +202,6 @@
       "Captain Morgan’s Black Spiced": 2,
       "Grenadine": 1,
       "Passionfruit Syrup": 1
-    }
-  },
-  "Crimbo-Politan": {
-    "color": [
-      "White"
-    ],
-    "recipe": {
-      "Ketel One Citroen": 3,
-      "Winter Spiced Berries Syrup": 1,
-      "Grenadine": 1
     }
   }
 }

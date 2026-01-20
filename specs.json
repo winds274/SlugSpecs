@@ -267,50 +267,5 @@
       "Sugar Syrup": "12.5ml",
       "Coffee Concentrate": "37.5ml"
     }
-  },
-  "Gingerbread Dream": {
-    "image": "1762956660546-Gingerbread Dream.png",
-    "ingredients": {
-      "Captain Morgan Black Spiced": "25ml",
-      "Monin Gingerbread Syrup": "25ml",
-      "Double Cream": "75ml"
-    }
-  },
-  "Swiftmas": {
-    "image": "1762956710438-Swiftmas.png",
-    "ingredients": {
-      "Smirnoff Raspberry Crush": "25ml",
-      "Grenadine": "25ml",
-      "Vinuva Prosecco": "50ml",
-      "Lemonade": "50ml"
-    }
-  },
-  "Gin, Actually": {
-    "image": "1762956757344-Gin Actually.png",
-    "ingredients": {
-      "Gordons Sloe Gin": "37.5ml",
-      "Lemon Juice": "25ml",
-      "Gomme": "12.5ml",
-      "Appletiser": "100ml"
-    }
-  },
-  "Sleigh All Day Sangria": {
-    "image": "1762956801264-Slay All Day.png",
-    "ingredients": {
-      "Gordons Pink Gin": "25ml",
-      "Winter Spiced Berries Syrup": "25ml",
-      "Red Wine": "50ml",
-      "Lemonade": "50ml"
-    }
-  },
-  "Crimbo-Politan": {
-    "image": "1762956874252-Crimbopolitan.png",
-    "ingredients": {
-      "Ketel One Citroen Vodka": "37.5ml",
-      "Winter Spiced Berries Syrup": "12.5ml",
-      "Grenadine": "12.5ml",
-      "Lime Juice": "12.5ml",
-      "Cranberry Juice": "25ml"
-    }
   }
 }

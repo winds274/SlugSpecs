@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Bar Stock Counter</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 10px;
+        background: #222;
+        color: #fff;
+    }
+
+    h1 {
+        text-align: center;
+    }
+
+    .cocktail {
+        background: #333;
+        padding: 10px;
+        margin: 5px 0;
+        border-radius: 8px;
+    }
+
+    .cocktail-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .name {
+        flex: 1;
+        font-size: 16px;
+    }
+
+    .controls {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    button {
+        padding: 5px 10px;
+        font-size: 16px;
+        border: none;
+        border-radius: 4px;
+        background: #555;
+        color: #fff;
+    }
+
+    button:active {
+        background: #777;
+    }
+
+    .count {
+        min-width: 30px;
+        text-align: center;
+        font-size: 16px;
+    }
+
+    .clear-btn {
+        width: 100%;
+        padding: 10px;
+        margin-top: 15px;
+        font-size: 16px;
+        background: #a33;
+        color: white;
+        border: none;
+        border-radius: 6px;
+    }
+</style>
+</head>
+
+<body>
+
+<nav>
+  <a href="index.html" style="color:#fff;text-decoration:none;">Home</a>
+</nav>
+
+<h1>Stock Counter</h1>
+
+<div id="item-list"></div>
+
+<button class="clear-btn" onclick="clearAll()">Clear All</button>
+
+<script>
+// ===== ITEMS (ADD / REMOVE HERE) =====
+const items = [
+    "Ketel One (6)",
+    "Smirnoff Red (6)",
+    "Smirnoff R-C (4)",
+    "Pink Gin (3)",
+    "Gordons (3)",
+    "Malibu (3)",
+    "Malibu Str (2)",
+    "CMW (2)",
+    "CMSG (6)",
+    "Jamesons (2)",
+    "Aperol (2)",
+    "Sarti (1)",
+    "JD (2)",
+    "Dis (2)",
+    "Jaeger (2)",
+    "Grenadine (2)",
+    "Gomme (2)",
+    "Passionfruit Syrup (2)",
+    "Fraise (2)",
+    "Coconut Syrup (1)",
+    "Caramel Syrup (1)",
+    "Honey Syrup (1)"
+];
+
+// ===== STATE =====
+const counts = {};
+items.forEach(item => counts[item] = 0);
+
+// ===== RENDER =====
+function renderItems() {
+    const list = document.getElementById("item-list");
+    list.innerHTML = "";
+
+    items.forEach(name => {
+        const div = document.createElement("div");
+        div.className = "cocktail";
+
+        const header = document.createElement("div");
+        header.className = "cocktail-header";
+
+        const nameSpan = document.createElement("span");
+        nameSpan.className = "name";
+        nameSpan.textContent = name;
+
+        const controls = document.createElement("div");
+        controls.className = "controls";
+
+        const minus = document.createElement("button");
+        minus.textContent = "−";
+        minus.onclick = () => {
+            if (counts[name] > 0) counts[name]--;
+            updateCount(name);
+        };
+
+        const countSpan = document.createElement("span");
+        countSpan.className = "count";
+        countSpan.id = `count-${name}`;
+        countSpan.textContent = counts[name];
+
+        const plus = document.createElement("button");
+        plus.textContent = "+";
+        plus.onclick = () => {
+            counts[name]++;
+            updateCount(name);
+        };
+
+        controls.append(minus, countSpan, plus);
+        header.append(nameSpan, controls);
+        div.appendChild(header);
+        list.appendChild(div);
+    });
+}
+
+function updateCount(name) {
+    document.getElementById(`count-${name}`).textContent = counts[name];
+}
+
+// ===== CLEAR =====
+function clearAll() {
+    Object.keys(counts).forEach(k => counts[k] = 0);
+    renderItems();
+}
+
+// Initial render
+renderItems();
+</script>
+
+</body>
+</html>
