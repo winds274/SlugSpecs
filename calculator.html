@@ -5,28 +5,129 @@
 <title>Bar Premix Calculator</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
-    body { font-family: Arial, sans-serif; margin: 0; padding: 10px; background: #222; color: #fff; }
-    h1 { text-align: center; }
-    .cocktail { background: #333; padding: 10px; margin: 5px 0; border-radius: 8px; }
-    .cocktail-header { display: flex; align-items: center; justify-content: space-between; }
-    .color-icon { width: 20px; height: 20px; border-radius: 4px; margin-right: 8px; flex-shrink: 0; }
-    .two-tone { background: linear-gradient(to bottom, var(--top) 50%, var(--bottom) 50%); }
-    .controls { display: flex; align-items: center; gap: 5px; }
-    button { padding: 5px 10px; font-size: 16px; border: none; border-radius: 4px; background: #555; color: #fff; }
-    button:active { background: #777; }
-    .count { min-width: 30px; text-align: center; font-size: 16px; }
-    .ingredients { margin-top: 5px; font-size: 14px; display: none; padding-left: 28px; }
-    .total-section { background: #444; padding: 10px; border-radius: 8px; margin-top: 15px; }
-    .toggle { cursor: pointer; flex: 1; }
+
+    body {
+        font-family: "Segoe UI", Arial, sans-serif;
+        margin: 0;
+        padding: 12px;
+        background: #f3f5f9;
+        color: #222;
+    }
+
+    h1 {
+        text-align: center;
+        padding: 20px 15px;
+        margin: -12px -12px 20px -12px;
+        background: linear-gradient(
+            135deg,
+            #003b8e 0%,
+            #0057b8 60%,
+            #ff4fa3 100%
+        );
+        color: white;
+        font-size: 2rem;
+        font-weight: 700;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+    }
+
+    .cocktail {
+        background: white;
+        padding: 14px;
+        margin: 10px 0;
+        border-radius: 16px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        border-top: 5px solid #ffd400;
+    }
+
+    .cocktail-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+    }
+
+    .color-icon {
+        width: 20px;
+        height: 20px;
+        border-radius: 5px;
+        margin-right: 8px;
+        flex-shrink: 0;
+        border: 1px solid rgba(0,0,0,0.1);
+    }
+
+    .two-tone {
+        background: linear-gradient(
+            to bottom,
+            var(--top) 50%,
+            var(--bottom) 50%
+        );
+    }
+
+    .controls {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    button {
+        padding: 8px 14px;
+        font-size: 18px;
+        border: none;
+        border-radius: 10px;
+        background: #0057b8;
+        color: white;
+        font-weight: bold;
+        min-width: 42px;
+        transition: 0.15s ease;
+    }
+
+    button:active {
+        transform: scale(0.96);
+        background: #003b8e;
+    }
+
+    .count {
+        min-width: 30px;
+        text-align: center;
+        font-size: 18px;
+        font-weight: 600;
+        color: #003b8e;
+    }
+
+    .ingredients {
+        margin-top: 10px;
+        font-size: 14px;
+        display: none;
+        padding-left: 28px;
+        color: #555;
+        line-height: 1.5;
+    }
+
+    .total-section {
+        background: white;
+        padding: 16px;
+        border-radius: 16px;
+        margin-top: 20px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        border-top: 5px solid #ff4fa3;
+    }
+
+    .toggle {
+        cursor: pointer;
+        flex: 1;
+        font-weight: 600;
+        color: #003b8e;
+    }
+
 </style>
 </head>
 <body>
 
+
+<h1>Premix Stock Calculator</h1>
 <nav>
   <a href="index.html">Home</a>
 </nav>
-
-<h1>Premix Stock Calculator</h1>
 <div id="cocktail-list"></div>
 <div class="total-section">
     <h2>Primary Mixes</h2>

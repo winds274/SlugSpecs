@@ -6,81 +6,121 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
+
     body {
-        font-family: Arial, sans-serif;
+        font-family: "Segoe UI", Arial, sans-serif;
         margin: 0;
-        padding: 10px;
-        background: #222;
-        color: #fff;
+        padding: 12px;
+        background: #f3f5f9;
+        color: #222;
     }
 
     h1 {
         text-align: center;
+        padding: 20px 15px;
+        margin: -12px -12px 20px -12px;
+        background: linear-gradient(
+            135deg,
+            #003b8e 0%,
+            #0057b8 60%,
+            #ff4fa3 100%
+        );
+        color: white;
+        font-size: 2rem;
+        font-weight: 700;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.15);
     }
 
     .cocktail {
-        background: #333;
-        padding: 10px;
-        margin: 5px 0;
-        border-radius: 8px;
+        background: white;
+        padding: 14px;
+        margin: 10px 0;
+        border-radius: 16px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        border-top: 5px solid #ffd400;
     }
 
     .cocktail-header {
         display: flex;
         align-items: center;
         justify-content: space-between;
+        gap: 10px;
     }
 
     .name {
         flex: 1;
         font-size: 16px;
+        font-weight: 600;
+        color: #003b8e;
     }
 
     .controls {
         display: flex;
         align-items: center;
-        gap: 5px;
+        gap: 6px;
     }
 
     button {
-        padding: 5px 10px;
-        font-size: 16px;
+        padding: 8px 14px;
+        font-size: 18px;
         border: none;
-        border-radius: 4px;
-        background: #555;
-        color: #fff;
+        border-radius: 10px;
+        background: #0057b8;
+        color: white;
+        font-weight: bold;
+        min-width: 42px;
+        transition: 0.15s ease;
     }
 
     button:active {
-        background: #777;
+        transform: scale(0.96);
+        background: #003b8e;
     }
 
     .count {
         min-width: 30px;
         text-align: center;
-        font-size: 16px;
+        font-size: 18px;
+        font-weight: 600;
+        color: #ff4fa3;
     }
 
     .clear-btn {
         width: 100%;
-        padding: 10px;
-        margin-top: 15px;
+        padding: 14px;
+        margin-top: 20px;
         font-size: 16px;
-        background: #a33;
+        font-weight: 700;
+        background: linear-gradient(
+            135deg,
+            #ff4fa3 0%,
+            #d93d87 100%
+        );
         color: white;
         border: none;
-        border-radius: 6px;
+        border-radius: 14px;
+        box-shadow: 0 4px 10px rgba(255,79,163,0.3);
     }
+
+    .clear-btn:active {
+        transform: scale(0.98);
+    }
+
 </style>
 </head>
 
 <body>
 
+
+<h1>Stock Counter</h1>
+
 <nav>
   <a href="index.html" style="color:#fff;text-decoration:none;">Home</a>
 </nav>
 
-<h1>Stock Counter</h1>
+<button onclick="copyCounts()" class="clear-btn" style="background:#2a7;">
+    Copy List
+</button>
 
 <div id="item-list"></div>
 
@@ -89,29 +129,29 @@
 <script>
 // ===== ITEMS (ADD / REMOVE HERE) =====
 const items = [
-    "Ketel One (6)",
-    "Smirnoff Red (6)",
-    "Smirnoff R-C (4)",
-    "Pink Gin (3)",
-    "Gordons (3)",
-    "Malibu (3)",
-    "Malibu Str (2)",
-    "CMW (2)",
-    "CMSG (6)",
-    "Jamesons (2)",
-    "Casamigos (2)",
-    "Aperol (2)",
-    "Sarti (1)",
-    "JD (2)",
-    "Courvosier (2)",
-    "Dis (2)",
-    "Jaeger (2)",
-    "Grenadine (2)",
-    "Gomme (2)",
-    "Passionfruit Syrup (2)",
-    "Fraise (2)",
-    "Coconut Syrup (1)",
-    "Caramel Syrup (1)",
+    "Ketel One",
+    "Smirnoff Red",
+    "Smirnoff R-C",
+    "Pink Gin",
+    "Gordons",
+    "Malibu",
+    "Malibu Str",
+    "CMW",
+    "CMSG",
+    "Jamesons",
+    "Casamigos",
+    "Aperol",
+    "Sarti",
+    "JD",
+    "Courvosier",
+    "Dis",
+    "Jaeger",
+    "Grenadine",
+    "Gomme",
+    "Passionfruit Syrup",
+    "Fraise",
+    "Coconut Syrup",
+    "Caramel Syrup",
 ];
 
 // ===== STATE =====
@@ -165,6 +205,67 @@ function renderItems() {
 
 function updateCount(name) {
     document.getElementById(`count-${name}`).textContent = counts[name];
+}
+
+// ===== COPY =====
+function copyCounts() {
+    let text = "";
+
+    items.forEach(name => {
+        if (counts[name] > 0) {
+            text += `${name}: ${counts[name]}\n`;
+        }
+    });
+
+    if (text === "") {
+        showPopup("Nothing to copy!");
+        return;
+    }
+
+    navigator.clipboard.writeText(text)
+        .then(() => {
+            showPopup("Copied to clipboard!");
+        })
+        .catch(err => {
+            console.error("Failed to copy: ", err);
+            showPopup("Copy failed!");
+        });
+}
+
+// ===== POPUP =====
+function showPopup(message) {
+    const popup = document.createElement("div");
+
+    popup.textContent = message;
+
+    popup.style.position = "fixed";
+    popup.style.bottom = "20px";
+    popup.style.left = "50%";
+    popup.style.transform = "translateX(-50%)";
+    popup.style.background = "#333";
+    popup.style.color = "#fff";
+    popup.style.padding = "12px 20px";
+    popup.style.borderRadius = "8px";
+    popup.style.fontSize = "16px";
+    popup.style.zIndex = "9999";
+    popup.style.opacity = "0";
+    popup.style.transition = "opacity 0.3s ease";
+
+    document.body.appendChild(popup);
+
+    // Fade in
+    setTimeout(() => {
+        popup.style.opacity = "1";
+    }, 10);
+
+    // Fade out + remove
+    setTimeout(() => {
+        popup.style.opacity = "0";
+
+        setTimeout(() => {
+            popup.remove();
+        }, 300);
+    }, 2000);
 }
 
 // ===== CLEAR =====

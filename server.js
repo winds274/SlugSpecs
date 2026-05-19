@@ -7,6 +7,8 @@ const app = express();
 const PORT = process.env.PORT || 7479;
 
 const drinksFile = path.join(__dirname, "specs.json");
+const usersFile = path.join(__dirname, "users.json");
+const brunchesFile = path.join(__dirname, "brunches.json");
 const imagesDir = path.join(__dirname, "Images");
 
 // Ensure Images folder exists
@@ -17,6 +19,15 @@ if (!fs.existsSync(imagesDir)) {
 // Ensure specs.json exists
 if (!fs.existsSync(drinksFile)) {
   fs.writeFileSync(drinksFile, "{}");  // empty object
+}
+
+// Ensure users and brunches.json exists
+if (!fs.existsSync(usersFile)) {
+  fs.writeFileSync(usersFile, "[]");
+}
+
+if (!fs.existsSync(brunchesFile)) {
+  fs.writeFileSync(brunchesFile, "[]");
 }
 
 // Admin locks
@@ -104,6 +115,22 @@ function saveDrinks(drinks) {
   fs.writeFileSync(drinksFile, JSON.stringify(drinks, null, 2));
 }
 
+function loadUsers() {
+  return JSON.parse(fs.readFileSync(usersFile, "utf-8") || "[]");
+}
+
+function saveUsers(users) {
+  fs.writeFileSync(usersFile, JSON.stringify(users, null, 2));
+}
+
+function loadBrunches() {
+  return JSON.parse(fs.readFileSync(brunchesFile, "utf-8") || "[]");
+}
+
+function saveBrunches(brunches) {
+  fs.writeFileSync(brunchesFile, JSON.stringify(brunches, null, 2));
+}
+
 // Add a new drink
 app.post("/addDrink", upload.single("image"), (req, res) => {
   const { name, ingredients } = req.body;
@@ -135,6 +162,91 @@ app.delete("/removeDrink/:name", (req, res) => {
   saveDrinks(drinks);
   res.sendStatus(200);
 });
+
+app.get("/users", (req, res) => {
+  res.json(loadUsers());
+});
+
+app.post("/users", (req, res) => {
+  const users = loadUsers();
+
+  const { name } = req.body;
+
+  if (!name) {
+    return res.status(400).send("Missing name");
+  }
+
+  if (!users.includes(name)) {
+    users.push(name);
+    saveUsers(users);
+  }
+
+  res.json(users);
+});
+
+app.get("/brunches", (req, res) => {
+
+  const user = req.query.user;
+
+  const brunches = loadBrunches();
+
+  const filtered = brunches.filter(
+    brunch => brunch.user === user
+    );
+
+  res.json(filtered);
+
+});
+
+app.post("/brunches", (req, res) => {
+  const brunches = loadBrunches();
+
+  const { table, user } = req.body;
+
+  if (!table || !user) {
+    return res.status(400).send("Missing data");
+  }
+
+  const brunch = {
+    id: Date.now(),
+    table,
+    user,
+    endTime: Date.now() + (2 * 60 * 60 * 1000)
+  };
+
+  brunches.push(brunch);
+
+  saveBrunches(brunches);
+
+  res.json(brunch);
+});
+
+app.delete("/brunches/:id", (req, res) => {
+
+    const id = Number(req.params.id);
+
+    let brunches = loadBrunches();
+
+    brunches = brunches.filter(
+        brunch => brunch.id !== id
+    );
+
+    saveBrunches(brunches);
+
+    res.json(brunches);
+
+});
+
+setInterval(() => {
+  const brunches = loadBrunches();
+
+  const active = brunches.filter(
+    brunch => brunch.endTime > Date.now()
+  );
+
+  saveBrunches(active);
+
+}, 60000);
 
 app.listen(PORT, () => {
   console.log(`Server running at on port ${PORT}`);

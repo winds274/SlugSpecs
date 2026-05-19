@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Brunch Timer</title>
+
+<style>
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "Segoe UI", Arial, sans-serif;
+    background: #f3f5f9;
+    color: #222;
+    padding: 20px;
+}
+
+/* =========================
+   TITLES
+========================= */
+
+h1 {
+    text-align: center;
+    padding: 20px 15px;
+    margin: -12px -12px 20px -12px;
+    background: linear-gradient(
+        135deg,
+        #003b8e 0%,
+        #0057b8 60%,
+        #ff4fa3 100%
+    );
+    font-size: 2rem;
+    color: white;
+    font-weight: 700;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+}
+
+h2 {
+    margin-bottom: 15px;
+    color: #003b8e;
+    font-size: 1.2rem;
+}
+
+/* =========================
+   SECTIONS
+========================= */
+
+.section {
+    max-width: 900px;
+    margin: auto;
+    margin-bottom: 30px;
+}
+
+/* =========================
+   CARD STYLING
+========================= */
+
+.card {
+    background: white;
+    border-radius: 18px;
+    padding: 18px;
+    margin-bottom: 16px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    border-top: 6px solid #0057b8;
+    transition: transform 0.2s ease;
+}
+
+.card:active {
+    transform: scale(0.98);
+}
+
+/* =========================
+   BUTTONS
+========================= */
+
+button {
+    border: none;
+    border-radius: 12px;
+    padding: 12px 16px;
+    background: linear-gradient(
+        135deg,
+        #003b8e 0%,
+        #0057b8 60%,
+        #ff4fa3 100%
+    );
+    color: white;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+    width: 100%;
+}
+
+button:hover {
+    opacity: 0.92;
+}
+
+button:active {
+    transform: scale(0.98);
+}
+
+/* =========================
+   INPUTS
+========================= */
+
+input {
+    width: 100%;
+    padding: 14px;
+    margin-top: 10px;
+    margin-bottom: 12px;
+    border-radius: 12px;
+    border: 1px solid #d7dce5;
+    background: white;
+    font-size: 1rem;
+    outline: none;
+    transition: border 0.2s ease;
+}
+
+input:focus {
+    border: 1px solid #0057b8;
+}
+
+/* =========================
+   HIDDEN ELEMENTS
+========================= */
+
+.hidden {
+    display: none;
+}
+
+/* =========================
+   USER BUTTONS
+========================= */
+
+#user-list button,
+#brunch-list button {
+    width: 100%;
+}
+
+/* =========================
+   TIMER TEXT
+========================= */
+
+.card strong {
+    font-size: 1.1rem;
+    color: #003b8e;
+}
+
+.card span {
+    font-weight: 600;
+    color: #ff4fa3;
+}
+
+/* =========================
+   BACK BUTTON
+========================= */
+
+#brunch-screen > button:first-child {
+    width: auto;
+    padding: 10px 18px;
+    margin-bottom: 20px;
+}
+
+/* =========================
+   ADD BUTTONS
+========================= */
+
+#user-screen > button,
+#brunch-screen > button:not(:first-child) {
+    margin-top: 10px;
+}
+
+/* =========================
+   MOBILE FRIENDLY
+========================= */
+
+@media (max-width: 600px) {
+
+    body {
+        padding: 14px;
+    }
+
+    h1 {
+        font-size: 1.7rem;
+    }
+
+    .card {
+        padding: 16px;
+    }
+
+    button {
+        font-size: 0.95rem;
+    }
+
+}
+
+</style>
+</head>
+
+<body>
+
+<h1>Brunch Timer</h1>
+<nav>
+  <a href="index.html">Home</a>
+</nav>
+
+<!-- USER SELECTION -->
+<div id="user-screen" class="section">
+
+    <h2>Select User</h2>
+
+    <div id="user-list"></div>
+
+    <button onclick="showAddUser()">+</button>
+
+    <div id="add-user-box" class="hidden">
+        <input type="text" id="new-user-name" placeholder="Enter name">
+        <button onclick="addUser()">Add User</button>
+    </div>
+
+</div>
+
+<!-- BRUNCH SCREEN -->
+<div id="brunch-screen" class="section hidden">
+
+    <button onclick="goBack()">← Back</button>
+
+    <h2 id="welcome-text"></h2>
+
+    <div id="brunch-list"></div>
+
+    <button onclick="showAddBrunch()">+</button>
+
+    <div id="add-brunch-box" class="hidden">
+        <input type="number" id="table-number" placeholder="Table Number">
+        <button onclick="addBrunch()">Start Brunch</button>
+    </div>
+
+</div>
+
+<script>
+// ===== USERS =====
+let users = [];
+
+let currentUser = null;
+
+// ===== BRUNCHES =====
+let brunches = [];
+
+async function loadUsers() {
+    try {
+        const response = await fetch("/users.json");
+        users = await response.json();
+
+        renderUsers();
+    } catch (err) {
+        console.error("Failed to load users:", err);
+    }
+}
+
+// ===== RENDER USERS =====
+function renderUsers() {
+    const list = document.getElementById("user-list");
+    list.innerHTML = "";
+
+    users.forEach(user => {
+        const div = document.createElement("div");
+        div.className = "card";
+
+        const btn = document.createElement("button");
+        btn.textContent = user;
+
+        btn.onclick = () => selectUser(user);
+
+        div.appendChild(btn);
+        list.appendChild(div);
+    });
+}
+
+// ===== SELECT USER =====
+function selectUser(user) {
+    currentUser = user;
+
+    document.getElementById("user-screen").classList.add("hidden");
+    document.getElementById("brunch-screen").classList.remove("hidden");
+
+    document.getElementById("welcome-text").textContent =
+        `Active Brunches - ${user}`;
+
+    loadBrunches();
+}
+
+// ===== ADD USER =====
+function showAddUser() {
+    document.getElementById("add-user-box").classList.remove("hidden");
+}
+
+async function addUser() {
+
+    const input = document.getElementById("new-user-name");
+
+    const name = input.value.trim();
+
+    if (!name) return;
+
+    try {
+
+        const response = await fetch("/users", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ name })
+        });
+        
+        users = await response.json();
+
+        input.value = "";
+
+        renderUsers();
+
+    } catch (err) {
+        console.error("Failed to add user:", err);
+    }
+}
+
+// ===== BRUNCHES =====
+function showAddBrunch() {
+    document.getElementById("add-brunch-box").classList.remove("hidden");
+}
+
+async function addBrunch() {
+    const input = document.getElementById("table-number");
+
+    const table = input.value.trim();
+
+    if (!table) return;
+
+    try {
+
+        await fetch("/brunches", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                table,
+                user: currentUser
+            })
+        });
+
+        input.value = "";
+
+        loadBrunches();
+    } catch (err) {
+
+        console.error("Failed to add brunch:", err);
+
+    }
+}
+
+async function loadBrunches() {
+
+    try {
+
+        const response = await fetch(
+            `/brunches?user=${currentUser}`
+            );
+
+        brunches = await response.json();
+
+        renderBrunches();
+    } catch (err) {
+
+        console.error("Failed to load brunches:", err);
+    }
+}
+
+// ===== RENDER BRUNCHES =====
+function renderBrunches() {
+    const list = document.getElementById("brunch-list");
+
+    list.innerHTML = "";
+
+    brunches.forEach((brunch, index) => {
+
+        const div = document.createElement("div");
+        div.className = "card";
+
+        const remaining = getRemainingTime(brunch.endTime);
+
+        div.innerHTML = `
+            <strong>Table ${brunch.table}</strong>
+            <br>
+            Time Left: <span id="timer-${index}">${remaining}</span>
+            <br><br>
+            <button onclick="deleteBrunch(${brunch.id})">
+                Remove
+            </button>
+        `;
+
+        list.appendChild(div);
+    });
+}
+
+// ===== TIMER FORMAT =====
+function getRemainingTime(endTime) {
+
+    const diff = endTime - Date.now();
+
+    if (diff <= 0) {
+        return "Finished";
+    }
+
+    const hours = Math.floor(diff / 1000 / 60 / 60);
+    const minutes = Math.floor((diff / 1000 / 60) % 60);
+    const seconds = Math.floor((diff / 1000) % 60);
+
+    return `${hours}h ${minutes}m ${seconds}s`;
+}
+
+setInterval(loadBrunches, 5000);
+
+// ===== LIVE TIMER UPDATE =====
+setInterval(() => {
+
+    brunches.forEach((brunch, index) => {
+
+        const timer = document.getElementById(`timer-${index}`);
+
+        if (timer) {
+            timer.textContent = getRemainingTime(brunch.endTime);
+        }
+
+    });
+
+}, 1000);
+
+// ===== START =====
+loadUsers();
+
+function goBack() {
+
+    currentUser = null;
+
+    document.getElementById("brunch-screen")
+        .classList.add("hidden");
+
+    document.getElementById("user-screen")
+        .classList.remove("hidden");
+
+}
+
+async function deleteBrunch(id) {
+
+    try {
+
+        await fetch(`/brunches/${id}`, {
+            method: "DELETE"
+        });
+
+        loadBrunches();
+
+    } catch (err) {
+
+        console.error("Failed to delete brunch:", err);
+
+    }
+}
+</script>
+
+</body>
+</html>
